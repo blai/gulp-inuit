@@ -1,5 +1,5 @@
 # gulp-inuit
-[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url]  [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Status][depstat-image]][depstat-url]
+[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]](https://travis-ci.org/blai/gulp-inuit.svg) [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Status][depstat-image]][depstat-url]
 
 > [Inuit](https://github.com/inuitcss/getting-started#import-order) plugin for [gulp](https://github.com/wearefractal/gulp)
 
@@ -37,20 +37,6 @@ inuit(sassFileStream)
 ## API
 
 ### inuit(fileStream, options)
-
-sections: [
-  'customize',
-  'settings',
-  'tools',
-  'generic',
-  'base',
-  'objects',
-  'components',
-  'trumps'
-],
-starttag: '//= {{name}}:{{ext}}',
-endtag: '//= endinject',
-ext: 'scss'
 
 #### options.sections
 Type: `Array`  
