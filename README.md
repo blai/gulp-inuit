@@ -1,5 +1,5 @@
 # gulp-inuit
-[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]](https://travis-ci.org/blai/gulp-inuit.svg) [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Status][depstat-image]][depstat-url]
+[![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Status][depstat-image]][depstat-url]
 
 > [Inuit](https://github.com/inuitcss/getting-started#import-order) plugin for [gulp](https://github.com/wearefractal/gulp)
 
@@ -36,7 +36,7 @@ inuit(sassFileStream)
 
 ## API
 
-### inuit(fileStream, options)
+### inuit ( fileStream [, options ] )
 
 #### options.sections
 Type: `Array`  
@@ -54,19 +54,19 @@ Default: `[
 The array of section names, in their expected import order. The default values is as documented on [Inuit's getting started guide](https://github.com/inuitcss/getting-started#import-order), plus the `customize` type added in front, allowing you to introduce local files that defines customization to the variables of Inuit framework.
 
 #### options.starttag
-Type: `String`
+Type: `String`  
 Default: `//= {{name}}:{{ext}}`
 
 `gulp-inuit` uses [gulp-inject](https://github.com/klei/gulp-inject) internally to create a centralized `index.scss` file that imports all modular `.scss` files in order. This option is in fact the [starttag](https://github.com/klei/gulp-inject#optionsstarttag) option from that plugin.
 
 #### options.endtag
-Type: `String`
+Type: `String`  
 Default: `//= endinject`
 
 Same reason as `options.starttag`, this is simply [endtag](https://github.com/klei/gulp-inject#optionsendtag) option from `gulp-inject`.
 
 #### options.ext
-Type: `String`
+Type: `String`  
 Default: `scss`
 
 Inuit uses `.scss` syntax, this option allows the plugin to work with any potential porting to other css preprocessing languages.
