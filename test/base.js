@@ -35,7 +35,7 @@ function expectedFile(file) {
 	});
 }
 
-describe('empty list of files', function() {
+describe('Empty cases', function() {
   it('should produce index.scss vinyl with just comments', function (done) {
   	var stream = inuit();
     var expected = expectedFile('1.scss');
@@ -56,7 +56,7 @@ describe('empty list of files', function() {
   });
 });
 
-describe('basic case with Inuit default modules', function() {
+describe('Module sorting', function() {
   it('should produce index.scss vinyl with modules sorted in inuit order', function(done) {
     var files = [
       'modules/inuit-box-sizing/_generic.box-sizing.scss',
@@ -79,10 +79,31 @@ describe('basic case with Inuit default modules', function() {
 
     stream.on('data', function(newFile) {
       should.exist(newFile);
+      newFile.path.should.equal(path.resolve('index.scss'));
       should.exist(newFile.contents);
 
       (newFile.contents + '\n').should.equal(expected);
       done();
     });
   });
+});
+
+describe('Options', function () {
+	it('should be able to customize `name` for the output vinyl object', function (done) {
+		var name = 'main';
+		var stream = inuit(filesToVinylStream([]), {
+			name: name
+		});
+
+    stream.on('error', function(err) {
+      should.exist(err);
+      done(err);
+    });
+
+    stream.on('data', function(newFile) {
+      should.exist(newFile);
+      newFile.path.should.equal(path.resolve(name + '.scss'));
+      done();
+    });
+	});
 });

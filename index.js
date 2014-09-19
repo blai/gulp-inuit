@@ -21,7 +21,8 @@ module.exports = function(fileStream, opts) {
     ],
     starttag: '//= {{name}}:{{ext}}',
     endtag: '//= endinject',
-    ext: 'scss'
+    ext: 'scss',
+    name: 'index'
   }, opts || {});
 
   var skeleton = _.map(opts.sections, function(sec) {
@@ -52,7 +53,7 @@ module.exports = function(fileStream, opts) {
   var stream = through.obj();
 
   stream.write(new gutil.File({
-    path: path.resolve('index.' + opts.ext),
+    path: path.resolve(opts.name + '.' + opts.ext),
     contents: new Buffer(skeleton)
   }));
   stream.end();

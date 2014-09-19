@@ -71,6 +71,12 @@ Default: `scss`
 
 Inuit uses `.scss` syntax, this option allows the plugin to work with any potential porting to other css preprocessing languages.
 
+#### options.name
+Type: `String`  
+Default: `index`
+
+The file name of the resulting vinyl object.
+
 
 ## License
 
