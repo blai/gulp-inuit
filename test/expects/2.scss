@@ -1,0 +1,29 @@
+//= customize:scss
+//= endinject
+
+//= settings:scss
+@import '${base}/modules/inuit-defaults/_settings.defaults.scss';
+//= endinject
+
+//= tools:scss
+@import '${base}/modules/inuit-functions/_tools.functions.scss';
+@import '${base}/modules/inuit-mixins/_tools.mixins.scss';
+//= endinject
+
+//= generic:scss
+@import '${base}/modules/inuit-box-sizing/_generic.box-sizing.scss';
+@import '${base}/modules/inuit-normalize/_generic.normalize.scss';
+//= endinject
+
+//= base:scss
+@import '${base}/modules/inuit-page/_base.page.scss';
+//= endinject
+
+//= objects:scss
+//= endinject
+
+//= components:scss
+//= endinject
+
+//= trumps:scss
+//= endinject
