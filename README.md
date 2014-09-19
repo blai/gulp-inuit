@@ -26,8 +26,7 @@ var mainBowerFiles = require('main-bower-files');
 var inuit = require("gulp-inuit");
 
 // it is not necessary to read in the content
-var sassFileStream = gulp.src(mainBowerFiles(), {read: false})
-	.pipe(gulp.src('**/*.scss', {read: false}));
+var sassFileStream = gulp.src(mainBowerFiles().concat('**/*.scss'), {read: false});
 
 inuit(sassFileStream)
 	.pipe(sass())

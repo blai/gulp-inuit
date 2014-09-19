@@ -7,6 +7,8 @@ var gutil = require('gulp-util');
 var filter = require('gulp-filter');
 var inject = require('gulp-inject');
 
+var others = 'others';
+
 module.exports = function(fileStream, opts) {
   opts = _.assign({
     sections: [
@@ -25,7 +27,7 @@ module.exports = function(fileStream, opts) {
     name: 'index'
   }, opts || {});
 
-  var skeleton = _.map(opts.sections, function(sec) {
+  var skeleton = _.map(opts.sections.concat(others), function(sec) {
     var placeholderTemplate = [opts.starttag, opts.endtag].join('\n');
     return _.template(placeholderTemplate, {
       name: sec,
@@ -59,12 +61,19 @@ module.exports = function(fileStream, opts) {
   stream.end();
 
   if (fileStream) {
+  	var globForRest = ['**/*.' + opts.ext];
     _.map(opts.sections, function(sec) {
-      var secFilter = filter('**/?(_)' + sec + '.*.' + opts.ext);
+    	var glob = '**/?(_)' + sec + '.*.' + opts.ext;
+      var secFilter = filter(glob);
+      globForRest.push('!' + glob);
       stream = stream.pipe(inject(fileStream.pipe(secFilter), _.assign({
         name: sec
       }, injectOpts)));
     });
+
+    stream = stream.pipe(inject(fileStream.pipe(filter(globForRest)), _.assign({
+    	name: others
+    }, injectOpts)));
   }
 
   return stream;

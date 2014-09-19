@@ -57,19 +57,41 @@ describe('Empty cases', function() {
 });
 
 describe('Module sorting', function() {
-  it('should produce index.scss vinyl with modules sorted in inuit order', function(done) {
-    var files = [
-      'modules/inuit-box-sizing/_generic.box-sizing.scss',
-      'modules/inuit-defaults/_settings.defaults.scss',
-      'modules/inuit-functions/_tools.functions.scss',
-      'modules/inuit-mixins/_tools.mixins.scss',
-      'modules/inuit-normalize/_generic.normalize.scss',
-      'modules/inuit-page/_base.page.scss'
-    ];
+	var files = [
+	  'bower_components/inuit-box-sizing/_generic.box-sizing.scss',
+	  'bower_components/inuit-defaults/_settings.defaults.scss',
+	  'bower_components/inuit-functions/_tools.functions.scss',
+	  'bower_components/inuit-mixins/_tools.mixins.scss',
+	  'bower_components/inuit-normalize/_generic.normalize.scss',
+	  'bower_components/inuit-page/_base.page.scss'
+	];
 
+  it('should sort default inuit sections in order', function(done) {
     var expected = expectedFile('2.scss');
 
     var fileStream = filesToVinylStream(files);
+    var stream = inuit(fileStream);
+
+    stream.on('error', function(err) {
+      should.exist(err);
+      done(err);
+    });
+
+    stream.on('data', function(newFile) {
+      should.exist(newFile);
+      newFile.path.should.equal(path.resolve('index.scss'));
+      should.exist(newFile.contents);
+
+      (newFile.contents + '\n').should.equal(expected);
+      done();
+    });
+  });
+
+  it('should add any unrecognized section to the end', function (done) {
+  	var filesWithLocal = files.concat('local/other.scss');
+    var expected = expectedFile('3.scss');
+
+    var fileStream = filesToVinylStream(filesWithLocal);
     var stream = inuit(fileStream);
 
     stream.on('error', function(err) {
