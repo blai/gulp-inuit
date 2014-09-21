@@ -7,8 +7,7 @@
   ],
   "scripts": {
     "test": "istanbul test _mocha --report html -- test/*.js --reporter spec",
-    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "postinstall": "bower install"
+    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "dependencies": {
     "gulp-filter": "^1.0.0",
@@ -23,8 +22,7 @@
     "mocha-lcov-reporter": "*",
     "istanbul": "*",
     "event-stream": "*",
-    "should": "^4.0.4",
-    "bower": "*"
+    "should": "^4.0.4"
   },
   "engines": {
     "node": ">=0.8.0",
