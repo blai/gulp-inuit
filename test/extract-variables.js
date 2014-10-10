@@ -33,17 +33,57 @@ function expectedFile(file) {
   return fs.readFileSync(path.resolve(__dirname, 'fixtures', file), 'utf8');
 }
 
-describe('Variables extraction', function() {
-  var inputs = [
-    'fixtures/_base.headings.scss',
-    'fixtures/_generic.box-sizing.scss',
-    'fixtures/_objects.box.scss',
-    'fixtures/_settings.defaults.scss',
-    'fixtures/_tools.functions.scss',
-    'fixtures/_tools.mixins.scss',
-    'fixtures/_trumps.spacing.scss',
-    'fixtures/other.scss'
-  ];
+var inputs = [
+  'fixtures/_base.headings.scss',
+  'fixtures/_generic.box-sizing.scss',
+  'fixtures/_objects.box.scss',
+  'fixtures/_settings.defaults.scss',
+  'fixtures/_tools.functions.scss',
+  'fixtures/_tools.mixins.scss',
+  'fixtures/_trumps.spacing.scss',
+  'fixtures/other.scss'
+];
+
+describe('Variable extraction: invalid inputs', function() {
+  it('should emit error when vinyl.isNull()', function(done) {
+    var stream = through.obj();
+    _.each(inputs, function(f) {
+      var p = path.resolve(base, f);
+      stream.write(new gutil.File({
+        path: p,
+        base: base
+      }));
+    });
+    stream.end();
+
+    stream.pipe(variables())
+      .on('error', function(err) {
+        err.message.should.eql('Requires file content to process variable extraction.');
+        done();
+      });
+  });
+
+  it('should emit error on streamed file', function(done) {
+    var stream = through.obj();
+    _.each(inputs, function(f) {
+      var p = path.resolve(base, f);
+      stream.write(new gutil.File({
+        path: p,
+        base: base,
+        contents: fs.createReadStream(p)
+      }));
+    });
+    stream.end();
+
+    stream.pipe(variables())
+      .on('error', function(err) {
+        err.message.should.eql('Stream is not supported.');
+        done();
+      });
+  });
+});
+
+describe('Variables extraction: function', function() {
 
   var outputs = [];
 
@@ -83,7 +123,7 @@ describe('Variables extraction', function() {
   });
 
   it('should extract variables with !default, as-is', function() {
-    outputs.forEach(function (o) {
+    outputs.forEach(function(o) {
       var expected = expectedFile(path.basename(o.path));
       o.contents.toString().should.eql(expected);
     });

@@ -1,14 +1,21 @@
 # gulp-inuit
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url] [![Dependency Status][depstat-image]][depstat-url]
 
-> [Inuit](https://github.com/inuitcss/getting-started#import-order) plugin for [gulp](https://github.com/wearefractal/gulp)
+> [Inuit](https://github.com/inuitcss/getting-started) plugin for [gulp](https://github.com/wearefractal/gulp)
 
-One common problem to deal with the new modular approach of [Inuit](https://github.com/inuitcss/getting-started#import-order) Framework is to import the modular sections [in order](https://github.com/inuitcss/getting-started#import-order). This gulp plugin is designed to specifically fill this gap.
+There are a few common problem we want to solve when developing custom [Inuit](https://github.com/inuitcss/getting-started) themes using its new modular approach with [Bower](http://bower.io/).
 
-Here's how it works:
+* Import the modular sections [in order](https://github.com/inuitcss/getting-started#import-order): you would usually need to maintain an `index.scss` that imports all the `.scss` files from your bower modules, like it is [recommended](https://github.com/inuitcss/getting-started#modifying-inuitcss)
+* Customizing variables defined by all those modules you are depending on.
 
-1. You feed `gulp-inuit` with a vinyl stream, just like any other gulp plugins. The easiest way to do so is to use [main-bower-files](https://github.com/ck86/main-bower-files).
-2. You then pipe the output of `gulp-inuit` to the sass compiler.
+These common problems (and common solutions) are not only tedious, but also problem-prone (think: copying a new variable for customization after upgrading an Inuit module). This gulp plugin is designed to specifically fill these gaps.
+
+## How it works:
+
+1. The primary function of `gulp-inuit` takes a vinyl stream and generate a virtual `index.scss` on the fly, importing all `.scss` files from all bower dependencies, [in order](https://github.com/inuitcss/getting-started#import-order). You can then pipe it to `gulp-sass` to get your css output. Simply put, you would never need to manually maintain a `index.scss` any more.
+2. The secondary function of `gulp-inuit` (exported as `variables`) will take a vinyl stream and translate that into a stream of files ([vinyl](https://github.com/wearefractal/vinyl) objects) with the variables extracted from those in the original stream.
+
+> [Try it out: **gulp-inuit-example**](https://github.com/blai/gulp-inuit-example)
 
 ## Usage
 
@@ -18,7 +25,11 @@ First, install `gulp-inuit` as a development dependency:
 npm install --save-dev gulp-inuit
 ```
 
-Then, add it to your `gulpfile.js`:
+## API
+
+> Primary usage
+
+### *inuit ( fileStream [, options ] )*
 
 ```javascript
 var sass = require('gulp-sass');
@@ -29,18 +40,29 @@ var inuit = require("gulp-inuit");
 var sassFileStream = gulp.src(mainBowerFiles().concat('**/*.scss'), {read: false});
 
 inuit(sassFileStream)
-	.pipe(sass())
-	.pipe(gulp.dest("./dist"));
+  .pipe(sass())
+  .pipe(gulp.dest("./dist"));
 ```
 
-## API
+#### options.name
+Type: `String`  
+Default: `index`
 
-### inuit ( fileStream [, options ] )
+The file name of the resulting vinyl object.
+
+```
+var sassFileStream = gulp.src(mainBowerFiles().concat('**/*.scss'), {read: false});
+
+// this will generate a file './dist/main.css', instead of './dist/index.css'
+inuit(sassFileStream, { name: 'main' })
+  .pipe(sass())
+  .pipe(gulp.dest("./dist"));
+
+```
 
 #### options.sections
 Type: `Array`  
 Default: `[
-  'customize',
   'settings',
   'tools',
   'generic',
@@ -50,7 +72,9 @@ Default: `[
   'trumps'
 ]`
 
-The array of section names, in their expected import order. The default values is as documented on [Inuit's getting started guide](https://github.com/inuitcss/getting-started#import-order), plus the `customize` type added in front, allowing you to introduce local files that defines customization to the variables of Inuit framework.
+The array of section names, in their expected import order. The default values is as documented on [Inuit's getting started guide](https://github.com/inuitcss/getting-started#import-order).
+
+> You may never have to change any of the following options.
 
 #### options.starttag
 Type: `String`  
@@ -70,12 +94,48 @@ Default: `scss`
 
 Inuit uses `.scss` syntax, this option allows the plugin to work with any potential porting to other css preprocessing languages.
 
-#### options.name
+---
+
+> Secondary usage
+
+### *inuit.variables ( [ options ] )*
+
+```javascript
+var gulp = require('gulp');
+var mainBowerFiles = require('main-bower-files');
+var conflict = require('gulp-conflit');
+var inuit = require("gulp-inuit");
+
+gulp.task('customize-variales', function () {
+  // you must NOT set { read: faslse }, the plugin needs to read into the content for variable extraction.
+  return gulp.src(mainBowerFiles())
+    .pipe(inuit.variables())
+    .pipe(conflict('./app/styles/customize'))
+    .pipe(gulp.dest('./app/styles/customize'));
+});
+```
+
+You can run this gulp task every time when you add/remove/update your bower dependencies. The task will generate a list of `.scss` files that captures the variables declared in those bower packages, and put the files in `app/styles/customize` directory. The `conflict()` gulp plugin shown in example should help you navigate through the changes before you apply them.
+
+#### options.sections
+Type: `Array`  
+Default: `[
+  'settings',
+  'tools',
+  'generic',
+  'base',
+  'objects',
+  'components',
+  'trumps'
+]`
+
+The array of section names, in their expected import order. The default values is as documented on [Inuit's getting started guide](https://github.com/inuitcss/getting-started#import-order). Only files with a name that follows the inuit file naming convention would be processed for variable extraction.
+
+#### options.ext
 Type: `String`  
-Default: `index`
+Default: `scss`
 
-The file name of the resulting vinyl object.
-
+Inuit uses `.scss` syntax, this option allows the plugin to work with any potential porting to other css preprocessing languages.
 
 ## License
 

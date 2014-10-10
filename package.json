@@ -1,6 +1,6 @@
 {
   "name": "gulp-inuit",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A plugin for Gulp",
   "keywords": [
     "gulpplugin"
@@ -14,7 +14,7 @@
     "gulp-inject": "^1.0.1",
     "gulp-util": "^3.0.1",
     "lodash": "^2.4.1",
-    "multimatch": "^0.3.0",
+    "multimatch": "^1.0.0",
     "through2": "^1.1.1"
   },
   "devDependencies": {
