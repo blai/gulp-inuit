@@ -1,0 +1,6 @@
+
+$other-variable: #f00 !default;
+
+.other {
+	color: $other-variable;
+}

@@ -1,31 +1,39 @@
 //= customize.settings:scss
+@import '${base}/fixtures/_customize.settings.defaults.scss';
 //= endinject
 
 //= settings:scss
+@import '${base}/fixtures/_settings.defaults.scss';
 //= endinject
 
 //= customize.tools:scss
 //= endinject
 
 //= tools:scss
+@import '${base}/fixtures/_tools.functions.scss';
+@import '${base}/fixtures/_tools.mixins.scss';
 //= endinject
 
 //= customize.generic:scss
 //= endinject
 
 //= generic:scss
+@import '${base}/fixtures/_generic.box-sizing.scss';
 //= endinject
 
 //= customize.base:scss
+@import '${base}/fixtures/_customize.base.headings.scss';
 //= endinject
 
 //= base:scss
+@import '${base}/fixtures/_base.headings.scss';
 //= endinject
 
 //= customize.objects:scss
 //= endinject
 
 //= objects:scss
+@import '${base}/fixtures/_objects.box.scss';
 //= endinject
 
 //= customize.components:scss
@@ -38,6 +46,7 @@
 //= endinject
 
 //= trumps:scss
+@import '${base}/fixtures/_trumps.spacing.scss';
 //= endinject
 
 //= customize.others:scss

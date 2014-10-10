@@ -1,4 +1,3 @@
-/*global describe, it*/
 'use strict';
 
 var path = require('path');
@@ -9,7 +8,7 @@ var through = require('through2');
 var should = require('should');
 var mocha = require('mocha');
 var gutil = require('gulp-util');
-var inuit = require('../');
+var aggregate = require('../lib/aggregate-in-order');
 
 var base = path.resolve('test');
 
@@ -37,7 +36,7 @@ function expectedFile(file) {
 
 describe('Empty cases', function() {
   it('should produce index.scss vinyl with just comments', function(done) {
-    var stream = inuit();
+    var stream = aggregate();
     var expected = expectedFile('1.scss');
 
     stream.on('error', function(err) {
@@ -58,19 +57,20 @@ describe('Empty cases', function() {
 
 describe('Module sorting', function() {
   var files = [
-    'bower_components/inuit-box-sizing/_generic.box-sizing.scss',
-    'bower_components/inuit-defaults/_settings.defaults.scss',
-    'bower_components/inuit-functions/_tools.functions.scss',
-    'bower_components/inuit-mixins/_tools.mixins.scss',
-    'bower_components/inuit-normalize/_generic.normalize.scss',
-    'bower_components/inuit-page/_base.page.scss'
+    'fixtures/_base.headings.scss',
+    'fixtures/_objects.box.scss',
+    'fixtures/_generic.box-sizing.scss',
+    'fixtures/_settings.defaults.scss',
+    'fixtures/_tools.functions.scss',
+    'fixtures/_tools.mixins.scss',
+    'fixtures/_trumps.spacing.scss'
   ];
 
   it('should sort default inuit sections in order', function(done) {
     var expected = expectedFile('2.scss');
 
     var fileStream = filesToVinylStream(files);
-    var stream = inuit(fileStream);
+    var stream = aggregate(fileStream);
 
     stream.on('error', function(err) {
       should.exist(err);
@@ -88,11 +88,36 @@ describe('Module sorting', function() {
   });
 
   it('should add any unrecognized section to the end', function(done) {
-    var filesWithLocal = files.concat('local/other.scss');
+    var filesWithOthers = files.concat('fixtures/other.scss');
     var expected = expectedFile('3.scss');
 
-    var fileStream = filesToVinylStream(filesWithLocal);
-    var stream = inuit(fileStream);
+    var fileStream = filesToVinylStream(filesWithOthers);
+    var stream = aggregate(fileStream);
+
+    stream.on('error', function(err) {
+      should.exist(err);
+      done(err);
+    });
+
+    stream.on('data', function(newFile) {
+      should.exist(newFile);
+      newFile.path.should.equal(path.resolve('index.scss'));
+      should.exist(newFile.contents);
+
+      (newFile.contents + '\n').should.equal(expected);
+      done();
+    });
+  });
+
+  it('should add customize files before their according sections', function(done) {
+    var filesWithCustomization = files.concat([
+      'fixtures/_customize.settings.defaults.scss',
+      'fixtures/_customize.base.headings.scss'
+    ]);
+    var expected = expectedFile('4.scss');
+
+    var fileStream = filesToVinylStream(filesWithCustomization);
+    var stream = aggregate(fileStream);
 
     stream.on('error', function(err) {
       should.exist(err);
@@ -113,7 +138,7 @@ describe('Module sorting', function() {
 describe('Options', function() {
   it('should be able to customize `name` for the output vinyl object', function(done) {
     var name = 'main';
-    var stream = inuit(filesToVinylStream([]), {
+    var stream = aggregate(filesToVinylStream([]), {
       name: name
     });
 
